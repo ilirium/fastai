@@ -217,9 +217,9 @@ def open_image(fn):
         The image in RGB format as numpy array of floats normalized to range between 0.0 - 1.0
     """
     flags = cv2.IMREAD_UNCHANGED+cv2.IMREAD_ANYDEPTH+cv2.IMREAD_ANYCOLOR
-    if not os.path.exists(fn):
+    if not os.path.exists(fn) and not str(fn).startswith("http"):
         raise OSError('No such file or directory: {}'.format(fn))
-    elif os.path.isdir(fn):
+    elif os.path.isdir(fn) and not str(fn).startswith("http"):
         raise OSError('Is a directory: {}'.format(fn))
     else:
         #res = np.array(Image.open(fn), dtype=np.float32)/255
@@ -228,7 +228,7 @@ def open_image(fn):
         try:
             if str(fn).startswith("http"):
                 req = urllib.urlopen(str(fn))
-                image = np.asarray(bytearray(resp.read()), dtype="uint8")
+                image = np.asarray(bytearray(req.read()), dtype="uint8")
                 im = cv2.imdecode(image, flags).astype(np.float32)/255
             else:
                 im = cv2.imread(str(fn), flags).astype(np.float32)/255
@@ -297,6 +297,10 @@ class ArraysIndexDataset(ArraysDataset):
     def get_y(self, i): return self.y[i]
 
 
+class ArraysIndexRegressionDataset(ArraysIndexDataset):
+    def is_reg(self): return True
+    
+    
 class ArraysNhotDataset(ArraysDataset):
     def get_c(self): return self.y.shape[1]
     @property
@@ -391,7 +395,7 @@ class ImageData(ModelData):
 
 class ImageClassifierData(ImageData):
     @classmethod
-    def from_arrays(cls, path, trn, val, bs=64, tfms=(None,None), classes=None, num_workers=4, test=None):
+    def from_arrays(cls, path, trn, val, bs=64, tfms=(None,None), classes=None, num_workers=4, test=None, continuous=False):
         """ Read in images and their labels given as numpy arrays
 
         Arguments:
@@ -408,7 +412,8 @@ class ImageClassifierData(ImageData):
         Returns:
             ImageClassifierData
         """
-        datasets = cls.get_ds(ArraysIndexDataset, trn, val, tfms, test=test)
+        f = ArraysIndexRegressionDataset if continuous else ArraysIndexDataset
+        datasets = cls.get_ds(f, trn, val, tfms, test=test)
         return cls(path, datasets, bs, num_workers, classes=classes)
 
     @classmethod
