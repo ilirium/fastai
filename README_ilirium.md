@@ -11,4 +11,8 @@
 
 
 ## Planet: Understanding the Amazon from Space
-+ `ilirium-lesson2-image_models.ipynb` just a copy of the `lesson2-image_models` file to learn, only minor changes like comments
++ `ilirium-lesson2-image_models.ipynb` just a copy of the `lesson2-image_models.ipynb` file to learn, only minor changes like comments
+
+
+## Rossmann Store Sales
++ `ilirium-lesson3-rossman.ipynb` just a copy of the `lesson3-rossman.ipynb.ipynb` file to learn, only minor changes like comments
