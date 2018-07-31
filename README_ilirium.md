@@ -16,3 +16,7 @@
 
 ## Rossmann Store Sales
 + `ilirium-lesson3-rossman.ipynb` just a copy of the `lesson3-rossman.ipynb.ipynb` file to learn, only minor changes like comments
+
+
+## MovieLens, Lesson 5
++ `ilirium-lesson5-movielens.ipynb` just a copy of the `ilirium-lesson5-movielens.ipynb` file to learn, only minor changes like comments
