@@ -14,6 +14,10 @@ def listify(x, y):
     if len(x)==1: x = x * n
     return x
 
+def datafy(x):
+    if is_listy(x): return [o.data for o in x]
+    else:           return x.data
+
 conv_dict = {np.dtype('int8'): torch.LongTensor, np.dtype('int16'): torch.LongTensor,
     np.dtype('int32'): torch.LongTensor, np.dtype('int64'): torch.LongTensor,
     np.dtype('float32'): torch.FloatTensor, np.dtype('float64'): torch.FloatTensor}
@@ -63,7 +67,9 @@ def to_np(v):
     if isinstance(v, (np.ndarray, np.generic)): return v
     if isinstance(v, (list,tuple)): return [to_np(o) for o in v]
     if isinstance(v, Variable): v=v.data
-    if isinstance(v, torch.cuda.HalfTensor): v=v.float()
+    if torch.cuda.is_available():
+        if isinstance(v, torch.cuda.HalfTensor): v=v.float()
+    if isinstance(v, torch.FloatTensor): v=v.float()
     return v.cpu().numpy()
 
 IS_TORCH_04 = LooseVersion(torch.__version__) >= LooseVersion('0.4')
@@ -153,7 +159,7 @@ def load(fn):
     """Utility function that loads model, function, etc as pickle"""
     return pickle.load(open(fn,'rb'))
 def load2(fn):
-    """Utility funciton allowing model piclking across Python2 and Python3"""
+    """Utility function allowing model piclking across Python2 and Python3"""
     return pickle.load(open(fn,'rb'), encoding='iso-8859-1')
 
 def load_array(fname): 
